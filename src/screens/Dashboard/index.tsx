@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/core';
 import { StackNavigationProp } from '@react-navigation/stack';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TextInput } from 'react-native';
 
 import { Background } from '../../components/Background';
@@ -37,23 +37,21 @@ export function Dashboard() {
   const { addRepository, repositories } = useRepositories();
 
   function handleAddRepository() {
-    /**
-     * TODO: 
-     * - call addRepository function sending inputText value;
-     * - clean inputText value.
-     */
+    if (inputText.length > 0) {
+      addRepository(inputText);
+      setInputText('');
+      inputRef.current?.clear();
+    }    
   }
 
   function handleRepositoryPageNavigation(id: number) {
-    /**
-     * TODO - navigate to the Repository screen sending repository id.
-     * Remember to use the correct prop name (repositoryId) to the repositoy id:
-     * 
-     * navigate(SCREEN NAME, {
-     *  repositoryId: id of the repository
-     * })
-     */
+    navigate('Repository', { repositoryId: id });
   }
+
+  useEffect (() => {
+    inputRef.current?.focus();
+    console.log(repositories);
+  });
 
   return (
     <Background>
@@ -66,11 +64,7 @@ export function Dashboard() {
               ref={inputRef}
               placeholder="Digite aqui 'usuário/repositório'"
               value={inputText}
-              /**
-               * TODO - update inputText value when input text value 
-               * changes:
-               * onChangeText={YOUR CODE HERE}
-               */
+              onChangeText={text => setInputText(text)}
               onSubmitEditing={handleAddRepository}
               returnKeyType="send"
               autoCapitalize='none'
@@ -80,11 +74,7 @@ export function Dashboard() {
             <InputButton
               testID="input-button"
               onPress={handleAddRepository}
-              /**
-               * TODO - ensure to disable button when inputText is 
-               * empty (use disabled prop to this):
-               * disabled={CONDITION HERE}
-               */
+              disabled={!inputText}
             >
               <Icon name="search" size={20} />
             </InputButton>
